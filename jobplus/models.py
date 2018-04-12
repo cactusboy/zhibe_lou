@@ -18,8 +18,8 @@ class User(Base, UserMixin):
     ROLE_ADMIN = 30
 
     id = db.Column(db.Integer, primary_key = True)
-    username = db.Column(db.String(32), unique=True, nullable=True)
-    email = db.Column(db.String(64), unique=True, nullable=True)
+    name = db.Column(db.String(32), unique=True, nullable=False)
+    email = db.Column(db.String(64), unique=True, nullable=False)
     _password = db.Column('password', db.String(256), nullable=False)
     role = db.Column(db.SmallInteger, default=ROLE_USER)
 
@@ -40,3 +40,26 @@ class User(Base, UserMixin):
     @property
     def is_admin(self):
         return self.role == self.ROLE_ADMIN
+
+    def __repr__(self):
+        return 'user {}'.format(self.name)
+
+class Enterprise(Base):
+    __tablename__ = 'enterprise'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), unique=True, nullable=False)
+
+    def __repr__(self):
+        return 'Enterprise {}'.format(self.name)
+
+class Postion(Base):
+    __tablename__  = 'position'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(32))
+    
+
+    def __repr__(self):
+        return '<Postion {}>'.format(self.name)
+    
