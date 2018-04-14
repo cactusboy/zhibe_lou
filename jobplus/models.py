@@ -18,10 +18,15 @@ class User(Base, UserMixin):
     ROLE_ADMIN = 30
 
     id = db.Column(db.Integer, primary_key = True)
+    real_name = db.Column(db.String(32))
     name = db.Column(db.String(32), unique=True, nullable=False)
     email = db.Column(db.String(64), unique=True, nullable=False)
     _password = db.Column('password', db.String(256), nullable=False)
     role = db.Column(db.SmallInteger, default=ROLE_USER)
+    phone = db.Column(db.String(11))
+    work_years = db.Column(db.SmallInteger)
+    resume_url = db.Column(db.String(128))
+    
 
     @property
     def password(self):

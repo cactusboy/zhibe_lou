@@ -67,6 +67,30 @@ class EnterpriseRegisterForm(FlaskForm):
             password=self.password.data)
         db.session.add(user)
         db.session.commit()
+
 class PersonalMsg(FlaskForm):
     name = StringField('姓名')
+    email = StringField('邮箱', validators=[Required(), email()])
+    password = PasswordField('密码(不填写保持不变)')
+    phone = StringField('手机号')
+    work_years = IntegerField('工作年限')
+    resume_url = StringField('上传简历')
+    submit = SubmitField('提交')
     
+    def validate_phone(self, field):
+        phone = field.data
+        if phone[:2] not in ('13','15','18') and len(phone) != 11:
+            raise ValidationError('请输入有效手机号码')
+
+    def updated_user(self, user):
+        user.real_name = self.name.data
+        user.email = self.email.data
+        user.phone = self.phone.data
+        user.work_years = self.work_years.data
+        user.resume_url = self.resume_url.data
+        if self.password.data:
+            user.password = self.password.data
+        db.session.add(user)
+        db.session.commit()
+
+
