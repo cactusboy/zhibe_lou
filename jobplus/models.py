@@ -42,24 +42,41 @@ class User(Base, UserMixin):
         return self.role == self.ROLE_ADMIN
 
     def __repr__(self):
-        return 'user {}'.format(self.name)
+        return 'User {}'.format(self.name)
 
 class Enterprise(Base):
     __tablename__ = 'enterprise'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True, nullable=False)
+    logo = db.Column(db.String(512), unique=True, nullable=False)
+    website = db.Column(db.String(512), nullable=False)
+    oneword_profile = db.Column(db.String(64), nullable=False)
+    location = db.Column(db.String(128), nullable=False)
+    position_number = db.Column(db.Integer, nullable=False)
+    enterprise_description = db.Column(db.String(1024), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id',ondelete='SET NULL'))
+    user = db.relationship('User', uselist=False, backref=db.backref('enterprise', uselist=False))
 
     def __repr__(self):
         return 'Enterprise {}'.format(self.name)
 
-class Postion(Base):
-    __tablename__  = 'position'
+class Job(Base):
+    __tablename__  = 'job'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32))
-    
+    salary_min = db.Column(db.Integer, nullable=False)
+    salary_max = db.Column(db.Integer, nullable=False)
+    experience_requirement = db.Column(db.String(1024) , nullable=False)
+    location = db.Column(db.String(64), nullable=False)
+    enterprise_msg = db.Column(db.String(1024))
+    enterprise_id = db.Column(db.Integer, db.ForeignKey('enterprise.id', ondelete='CASCADE'))
+    enterprise = db.relationship('Enterprise', uselist=False, backref=('jobs'))
+    job_requirement = db.Column(db.String(1024))
+    job_description = db.Column(db.String(1024))
+    job_number = db.Column(db.Integer)
 
     def __repr__(self):
-        return '<Postion {}>'.format(self.name)
+        return '<Job {}>'.format(self.name)
     
