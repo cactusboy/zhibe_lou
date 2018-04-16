@@ -1,45 +1,45 @@
-from flask import render_template,redirect,url_for
-from flask_login import login_user,logout_user,login_required
-from flask_wtf import Form
-from jobplus.forms import LoginForm
+from flask import Blueprint, render_template, flash, url_for, redirect
+from jobplus.forms import LoginForm, UserRegisterForm, CompanyRegisterForm
+from jobplus.models import User, db
+from flask_login import login_user
 
-@front.route('/login',methods=['GET','POST'])    
+front = Blueprint('front', __name__,)
+
+@front.route('/')
+def index():
+    return render_template('index.html')
+
+@front.route('/login', methods=['GET','POST'])
 def login():
-    form = LoginForm
+    form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email = form.email.data).first()  #数据库表名字User，可以改。这里还缺少判断登录人员的类型。
-        login_user(user,form.remember_me.data)
-        return redirect(url_for('用户简历管理'))
-    return render_template('login.html',form=form)
+        user = User.query.filter_by(email=form.email.data).first()
+        login_user(user, form.remember_me.data)
+        target_page = 'user.profile'
+        if user.is_company:
+            target_page = 'company.profile'
+        elif user.is_admin:
+            target_page = 'admin.index'
+        return redirect(url_for(target_page))
+    return render_template('login.html', form=form)
 
-@front.route('/logout')
-@login_required    #若没有登录则不能浏览
-def logout():
-    logout_user()
-    return redirect(url_for('登出到首页？index'))
-
-
-@front.route('/PersonalRegister',methods=['GET','POST'])
-def PersonalRegister():
-    form = RegistrationForm()
+@front.route('/userregister', methods=['GET','POST'])
+def userregister():
+    form = UserRegisterForm()
     if form.validate_on_submit():
-        user = User(email=form.email.data,
-                username=form.username.data,
-                password=form.password.data)
-        db.session.add(user)    #提交到user表
+        form.create_user()
+        flash('个人用户注册成功，请登录！', 'success')
+        return redirect(url_for('.login'))
+    return render_template('userregister.html',form=form)
+
+@front.route('/companyregister', methods=['GET','POST'])
+def companyregister():
+    form = CompanyRegisterForm()
+    if form.validate_on_submit():
+        enterprise_user = form.create_company()
+        enterprise_user.role = User.ROLE_COMPANY
+        db.session.add(enterprise_user)
         db.session.commit()
-        return redirect(url_for('front.login'))
-    return render_template('PersonalRegister.html',form=f
-            
-@front.route('/CompanyRegister',methods=['GET','POST'])
-def CompanyRegister():
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        company = Company(email=form.email.data,
-            username=form.username.data,
-            password=form.password.data)    #Company表单信息
-        db.session.add(company)    #提交到Company表
-        db.session.commit()
-        return redirect(url_for('front.login'))
-    return render_template('CompanyRegister.html',form=form)
-
+        flash('企业用户注册成功，请登录！', 'success')
+        return redirect(url_for('.login'))
+    return render_template('companyregister.html',form=form)
