@@ -22,8 +22,11 @@
 	<!-- Collect the nav links, forms, and other content for toggling -->
 	<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 	<ul class="nav navbar-nav">
-		<li class="active"><a href="/">职位<span class="sr-only">(current)</span></a></li>
-		<li><a href="/">公司</a></li>
+		<li class="{% if active  == 'job' %}active{% endif %}"><a href="{{ url_for('job.index') }}">职位<span class="sr-only">(current)</span></a></li>
+		<li class="{% if active == 'company' %}active{% endif %}"><a href="{{ url_for("company.index") }}">公司<span class="sr-only">(current)</span></a></li>
+        {% if current_user.is_authenticated and current_user.is_admin %}
+            <li><a href="{{ url_for('admin.index') }}">控制台</a><li>
+        {% endif %}
 	</ul>
 <ul class="nav navbar-nav navbar-right">
 	<li><a href="{{ url_for('front.userregister') }}">用户注册</a></li>
@@ -39,8 +42,8 @@
   {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
       {% for category, message in messages %}
-      <div class="alert alert-{{ category }} alert-dismissible" role="al    ert">
-        <button type="button" class="close" data-dismiss="alert" aria-la    bel="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="alert alert-{{ category }} alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         {{ message }}
       </div>
       {% endfor %}

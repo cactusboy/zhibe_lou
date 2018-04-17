@@ -14,8 +14,8 @@ class Base(db.Model):
 #sqlalchemy.exc.NoForeignKeysError: Could not determine join condition between parent/child tables on relationship Job.company - there are no foreign keys linking these tables. Ensure that referencing columns are associated with a ForeignKey or ForeignKeyConstraint, or specify a 'primaryjoin' expression
 user_job = db.Table(
     'user_job',
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id', ondelete='CASCADE')),
-    db.Column('job_id', db.Integer, db.ForeignKey('job.id', ondelete='CASCADE'))
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('job_id', db.Integer, db.ForeignKey('job.id'))
 
 )
 
@@ -36,6 +36,7 @@ class User(Base, UserMixin):
     work_years = db.Column(db.SmallInteger)
     resume_url = db.Column(db.String(128))
     company_msg = db.relationship('Company', uselist=False)
+    is_disable = db.Column(db.Boolean, default=False)
 
     @property
     def password(self):
@@ -62,12 +63,12 @@ class Company(Base):
     __tablename__ = 'company'
 
     id = db.Column(db.Integer, primary_key=True)
-    logo = db.Column(db.String(512), unique=True)
+    logo = db.Column(db.String(128), unique=True)
     slug = db.Column(db.String(64))
     website = db.Column(db.String(512))
     #一句话简介
     oneword_profile = db.Column(db.String(64))
-    finance_stage = db.Column(db.String(128))
+    #finance_stage = db.Column(db.String(128))
     address = db.Column(db.String(128))
     #职位个数
     position_number = db.Column(db.Integer)
@@ -100,7 +101,7 @@ class Job(Base):
     #职位描述
     job_description = db.Column(db.String(1024))
     #职位个数
-    job_number = db.Column(db.Integer)
+    job_number = db.Column(db.Integer, default=0)
 
     def __repr__(self):
         return '<Job {}>'.format(self.name)
