@@ -97,9 +97,9 @@ class Job(Base):
     company_id = db.Column(db.Integer, db.ForeignKey('company.id', ondelete='CASCADE'))
     company = db.relationship('User', uselist=False, backref=db.backref('jobs', lazy='dynamic'))
     #职位要求
-    job_requirement = db.Column(db.String(1024))
+    job_requirement = db.Column(db.String(128))
     #职位描述
-    job_description = db.Column(db.String(1024))
+    job_description = db.Column(db.String(128))
     #职位个数
     job_number = db.Column(db.Integer, default=0)
 
