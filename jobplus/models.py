@@ -94,7 +94,7 @@ class Job(Base):
     degree_requirement = db.Column(db.String(64))
     is_fulltime = db.Column(db.Boolean, default=True)
     address = db.Column(db.String(64), nullable=False)
-    company_id = db.Column(db.Integer, db.ForeignKey('company.id', ondelete='CASCADE'))
+    company_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
     company = db.relationship('User', uselist=False, backref=db.backref('jobs', lazy='dynamic'))
     #职位要求
     job_requirement = db.Column(db.String(128))

@@ -97,7 +97,7 @@ class PersonalMsgForm(FlaskForm):
 
 
 class CompanyMsgForm(FlaskForm):
-    name = StringField('姓名')
+    name = StringField('企业名称')
     email = StringField('邮箱', validators=[Required(), Email()])
     password = PasswordField('密码(不填写保持不变)')
     phone = StringField('手机号')
@@ -117,15 +117,53 @@ class CompanyMsgForm(FlaskForm):
     def updated_profile(self, company):
         company.name = self.name.data
         company.email = self.email.data
-        company.phone = self.phone.data
         if self.password.data:
             company.password = self.password.data
-        
-        company.slug = self.slug.data
-        company.address = self.address.data
-        company.website = self.website.data
-        company.logo = self.logo.data
-        company.oneword_profile = self.oneword_profile.data
-        company.detail = self.detail.data
+        if company.company_msg:
+            company_msg = company.company_msg
+        else:
+            company_msg = Company()
+            company_msg.user_id = company.id
+        self.populate_obj(company_msg)
+        db.session.add(company_msg)
+        db.session.add(company)
+        db.session.commit()
+
+class UserEditForm(FlaskForm):
+    email = StringField('邮箱', validators=[Required(), Email()])
+    password = PasswordField('密码')
+    real_name = StringField('姓名')
+    phone = StringField('手机号')
+    submit = SubmitField('提交')
+    
+    def update(self, user):
+        self.populate_obj(user)
+        if self.password.data:
+            user.password=self.password.data
+        db.session.add(user)
+        db.session.commit()
+
+
+class CompanyEditForm(FlaskForm):
+    name = StringField('企业名称')
+    email = StringField('邮箱', validators=[Required(), Email()])
+    password = PasswordField('密码')
+    phone = StringField('手机号')
+    website = StringField('公司网站', validators=[Length(0,64)])
+    description = StringField('一句话简介', validators=[Length(0,100)])
+    submit = SubmitField('提交')
+    
+    def update(self, company):
+        company.name = self.name.data
+        company.email = self.email.data
+        if self.password.data:
+            company.password = self.password.data
+        if company.company_msg:
+            company_msg = company.company_msg
+        else:
+            company_msg = Company()
+            company_msg.user_id = company.id
+        self.populate_obj(company_msg)
+        db.session.add(company_msg)
         db.session.add(company)
         db.session.commit()

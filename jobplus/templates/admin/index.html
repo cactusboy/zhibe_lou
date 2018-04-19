@@ -9,8 +9,8 @@
         <div class="list-group">
             <a href="{{ url_for('admin.users') }}" class="list-group-item">用户管理</a>
         </div>
-    </div>
     {% block operation %}{% endblock %}
+    </div>
 
     <div class="col-md-9">
         {% block admin %}{% endblock %}

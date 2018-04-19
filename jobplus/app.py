@@ -1,7 +1,7 @@
 from flask import Flask
 from .models import db, User
 from .config import configs
-from .handlers import front, company, job, user
+from .handlers import front, company, job, user, admin
 from flask_migrate import Migrate
 from flask_login import LoginManager
 
@@ -18,6 +18,7 @@ def register_blueprints(app):
     app.register_blueprint(job)
     app.register_blueprint(company)
     app.register_blueprint(user)
+    app.register_blueprint(admin)
     
 
 def register_extentions(app):
